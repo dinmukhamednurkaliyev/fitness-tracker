@@ -50,16 +50,16 @@ jobs:
 
       - name: Dart format check
         if: steps.changes.outputs.flutter == 'true'
-        run: melos run format:check --no-private
+        run: melos run format:check
 
       - name: Dart analyze
         if: steps.changes.outputs.flutter == 'true'
-        run: melos run analyze:all --no-private
+        run: melos run analyze:all
 
       - name: Flutter tests + coverage
         if: steps.changes.outputs.flutter == 'true'
         run: |
-          melos run test:coverage --no-private
+          melos run test:coverage
           find . -name "coverage" -exec cp {}/lcov.info coverage_{{ hashFiles('**/lcov.info') }}.info \;
 
       - name: Go mod tidy check
