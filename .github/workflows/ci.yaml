@@ -84,4 +84,4 @@ jobs:
           args: --timeout=5m
 
       - name: All good
-        run: echo "CI passed in ${{ steps.changes.outputs.count }} changed parts"
+        run: echo "CI passed in ${{ steps.changes.outputs.changes }} changed parts"
