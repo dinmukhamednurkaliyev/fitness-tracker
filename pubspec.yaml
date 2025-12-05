@@ -1,0 +1,61 @@
+name: fitness_tracker
+publish_to: "none"
+repository: https://github.com/dinmukhamednurkaliyev/fitness-tracker
+environment:
+  sdk: ^3.10.1
+
+dev_dependencies:
+  melos: ^7.3.0
+
+melos:
+  packages:
+    - applications/**
+    - packages/**
+    - services/**
+
+  command:
+    bootstrap:
+      hooks:
+        post: melos run prepare:all
+
+  scripts:
+    prepare:all:
+      run: |
+        melos clean:all
+        melos bootstrap
+      description: Clean and bootstrap all packages.
+    analyze:all:
+      run: melos exec -c 8 -- "dart analyze . --fatal-infos --fatal-warnings"
+      description: Run static analysis across the entire repository.
+    test:unit:
+      run: melos exec -c 8 --dir-exists="test" -- "flutter test"
+      description: Run unit tests in packages that have a 'test' directory.
+    test:coverage:
+      run: |
+        melos exec -c 8 -- "flutter test --coverage"
+        find . -name "lcov.info" -exec cp {} coverage/lcov.info \; || true
+        find . -name "lcov.info" -not -path "./coverage/*" -exec rm {} \;
+      description: Run unit tests in packages that have a 'test' directory.
+    gen:build_runner:
+      run: melos exec -c 8 --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
+      description: Run code generation (Freezed, JSON Serializable) only for packages that depend on build_runner.
+    gen:build_runner:watch:
+      run: melos exec -c 8 --depends-on="build_runner" -- "flutter pub run build_runner watch"
+      description: Run code generation (Freezed, JSON Serializable) only for packages that depend on build_runner.
+    format:all:
+      run: melos exec -c 10 -- "dart format ."
+      description: Run code formatting across the entire repository.
+    format:check:
+      run: melos exec -c 10 -- "dart format . --line-length 100 --set-exit-code"
+      description: Check if code formatting is correct across the entire repository.
+    clean:all:
+      run: melos exec -c 10 -- "flutter clean"
+      description: Clean all packages.
+    fix:all:
+      run: melos exec -c 10 -- "dart fix --apply"
+      description: Apply automatic fixes in all packages.
+    rebuild:all:
+      run: |
+        melos run clean:all
+        melos run prepare:all
+      description: Rebuild all packages.
