@@ -44,9 +44,15 @@ jobs:
           version: "3.38.4"
           cache: true
 
-      - name: Setup Melos
+      - name: Activate Melos & Dart coverage
         if: steps.changes.outputs.flutter == 'true'
-        run: flutter pub global activate melos
+        run: |
+          flutter pub global activate melos
+          dart pub global activate coverage
+
+      - name: Melos bootstrap
+        if: steps.changes.outputs.flutter == 'true'
+        run: melos bootstrap
 
       - name: Dart format check
         if: steps.changes.outputs.flutter == 'true'
@@ -60,9 +66,24 @@ jobs:
         if: steps.changes.outputs.flutter == 'true'
         run: |
           melos run test:coverage
-          mkdir -p coverage
-          lcov --rc lcov_branch_coverage=1 -a $(find . -name "lcov.info" -not -path "./coverage/*") -o coverage/lcov.info
-          find . -name "lcov.info" -not -path "./coverage/*" -exec rm {} \;
+          dart pub global run coverage:collect \
+            --in=**/coverage/lcov.info \
+            --out=coverage/lcov.info \
+            --wait-paused || true
+
+          dart pub global run coverage:format \
+            --html \
+            --in=coverage/lcov.info \
+            --out=coverage/html \
+            --report-on=lib || echo "No coverage files found"
+
+      - name: Setup Go
+        if: steps.changes.outputs.go == 'true'
+        uses: actions/setup-go@v6.1.0
+        with:
+          go-version: "1.25.5"
+          cache: true
+
       - name: Go mod tidy check
         if: steps.changes.outputs.go == 'true'
         run: |
