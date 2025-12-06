@@ -13,11 +13,6 @@ melos:
     - packages/**
     - services/**
 
-  command:
-    bootstrap:
-      hooks:
-        post: melos run prepare:all
-
   scripts:
     prepare:all:
       run: |
