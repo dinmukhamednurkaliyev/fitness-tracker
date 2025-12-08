@@ -34,24 +34,24 @@ jobs:
   flutter-lint:
     needs: detect-changes
     if: needs.detect-changes.outputs.flutter == 'true'
-    uses: ./.github/workflows/flutter-lint.yaml
+    uses: .github/workflows/flutter-lint.yaml
 
   flutter-analyze:
     needs: detect-changes
     if: needs.detect-changes.outputs.flutter == 'true'
-    uses: ./.github/workflows/flutter-analyze.yaml
+    uses: .github/workflows/flutter-analyze.yaml
 
   flutter-test-coverage:
     needs: [detect-changes, flutter-analyze]
     if: needs.detect-changes.outputs.flutter == 'true'
-    uses: ./.github/workflows/flutter-test-coverage.yaml
+    uses: .github/workflows/flutter-test-coverage.yaml
 
   go-lint:
     needs: detect-changes
     if: needs.detect-changes.outputs.go == 'true'
-    uses: ./.github/workflows/go-lint.yaml
+    uses: .github/workflows/go-lint.yaml
 
   go-test:
     needs: detect-changes
     if: needs.detect-changes.outputs.go == 'true'
-    uses: ./.github/workflows/go-test.yaml
+    uses: .github/workflows/go-test.yaml
