@@ -1,11 +1,11 @@
-name: Flutter Analyze
+name: Flutter Lint
 on:
   workflow_call:
 jobs:
-  analyze:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: .github/actions/setup-flutter/action.yaml
+      - uses: .github/actions/setup-flutter/action.yml
       - run: melos bootstrap
-      - run: melos run analyze:all
+      - run: melos run format:check
