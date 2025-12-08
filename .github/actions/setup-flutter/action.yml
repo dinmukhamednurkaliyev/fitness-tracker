@@ -2,12 +2,10 @@ name: Setup Flutter + Melos
 runs:
   using: composite
   steps:
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2.21.0
+    - uses: subosito/flutter-action@v2.21.0
       with:
         channel: stable
         version: "3.38.4"
         cache: true
-    - name: Activate Melos
-      run: flutter pub global activate melos
+    - run: flutter pub global activate melos
       shell: bash
