@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: .github/actions/setup-go/action.yaml
+      - uses: .github/actions/setup-go/
       - uses: golangci/golangci-lint-action@v9.2.0
         with:
           version: v2.7.0
