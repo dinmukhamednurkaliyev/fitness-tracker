@@ -6,6 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: ./.github/actions/setup-flutter/action.yml
+      - uses: .github/actions/setup-flutter/action.yaml
       - run: melos bootstrap
       - run: melos run format:check
