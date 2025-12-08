@@ -1,3 +1,4 @@
+# .github/workflows/ci-orchestrator.yml
 name: CI
 
 on:
@@ -6,21 +7,18 @@ on:
   pull_request:
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check:
-    name: Lint → Analyze → Test → Coverage
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      flutter: ${{ steps.changes.outputs.flutter }}
+      go: ${{ steps.changes.outputs.go }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Detect changed parts
-        uses: dorny/paths-filter@v3.0.2
+      - uses: actions/checkout@v6.0.1
+      - uses: dorny/paths-filter@v3.0.2
         id: changes
         with:
           filters: |
@@ -33,77 +31,28 @@ jobs:
               - 'services/**'
               - 'go.*'
               - '**/*.go'
-            proto:
-              - 'proto/**'
 
-      - name: Setup Flutter
-        if: steps.changes.outputs.flutter == 'true'
-        uses: subosito/flutter-action@v2.21.0
-        with:
-          channel: stable
-          version: "3.38.4"
-          cache: true
+  flutter-lint:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.flutter == 'true'
+    uses: ./.github/workflows/flutter-lint.yml
 
-      - name: Activate Melos & Dart coverage
-        if: steps.changes.outputs.flutter == 'true'
-        run: |
-          flutter pub global activate melos
-          dart pub global activate coverage
+  flutter-analyze:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.flutter == 'true'
+    uses: ./.github/workflows/flutter-analyze.yml
 
-      - name: Melos bootstrap
-        if: steps.changes.outputs.flutter == 'true'
-        run: melos bootstrap
+  flutter-test-coverage:
+    needs: [detect-changes, flutter-analyze]
+    if: needs.detect-changes.outputs.flutter == 'true'
+    uses: ./.github/workflows/flutter-test-coverage.yml
 
-      - name: Dart format check
-        if: steps.changes.outputs.flutter == 'true'
-        run: melos run format:check
+  go-lint:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.go == 'true'
+    uses: ./.github/workflows/go-lint.yml
 
-      - name: Dart analyze
-        if: steps.changes.outputs.flutter == 'true'
-        run: melos run analyze:all
-
-      - name: Flutter tests + coverage
-        if: steps.changes.outputs.flutter == 'true'
-        run: |
-          melos run test:coverage
-          dart pub global run coverage:collect \
-            --in=**/coverage/lcov.info \
-            --out=coverage/lcov.info \
-            --wait-paused || true
-
-          dart pub global run coverage:format \
-            --html \
-            --in=coverage/lcov.info \
-            --out=coverage/html \
-            --report-on=lib || echo "No coverage files found"
-
-      - name: Setup Go
-        if: steps.changes.outputs.go == 'true'
-        uses: actions/setup-go@v6.1.0
-        with:
-          go-version: "1.25.5"
-          cache: true
-
-      - name: Go mod tidy check
-        if: steps.changes.outputs.go == 'true'
-        run: |
-          cd services/api
-          go mod tidy
-          git diff --exit-code go.mod go.sum
-
-      - name: Go tests + race + coverage
-        if: steps.changes.outputs.go == 'true'
-        run: |
-          cd services/api
-          go test ./... -race -coverprofile=coverage.txt -covermode=atomic
-
-      - name: Go lint (golangci-lint)
-        if: steps.changes.outputs.go == 'true'
-        uses: golangci/golangci-lint-action@v9.2.0
-        with:
-          version: v2.7.0
-          working-directory: services/api
-          args: --timeout=5m
-
-      - name: All good
-        run: echo "CI passed in ${{ steps.changes.outputs.changes }} changed parts"
+  go-test:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.go == 'true'
+    uses: ./.github/workflows/go-test.yml

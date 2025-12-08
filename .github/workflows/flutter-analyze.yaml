@@ -1,0 +1,17 @@
+name: Flutter Analyze
+
+on:
+  workflow_call:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.1
+      - uses: ./.github/workflows/reusable/setup-flutter.yml
+
+      - name: Melos bootstrap
+        run: melos bootstrap
+
+      - name: Dart analyze
+        run: melos run analyze:all
