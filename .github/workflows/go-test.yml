@@ -1,14 +1,12 @@
 name: Go Test & Coverage
-
 on:
   workflow_call:
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: ./.github/workflows/reusable/setup-go.yml
+      - uses: ./.github/actions/setup-go/action.yml
 
       - name: go mod tidy check
         run: |
@@ -16,12 +14,11 @@ jobs:
           go mod tidy
           git diff --exit-code go.mod go.sum
 
-      - name: Test with race detector
+      - name: Test with race
         run: |
           cd services/api
           go test ./... -race -coverprofile=coverage.txt -covermode=atomic
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v4
         with:
           files: services/api/coverage.txt

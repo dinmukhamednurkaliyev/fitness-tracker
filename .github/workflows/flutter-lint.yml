@@ -1,0 +1,11 @@
+name: Flutter Lint
+on:
+  workflow_call:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.1
+      - uses: ./.github/actions/setup-flutter/action.yml
+      - run: melos bootstrap
+      - run: melos run format:check
