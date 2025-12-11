@@ -38,7 +38,7 @@ jobs:
     uses: ./.github/workflows/flutter-lint.yaml
 
   flutter-analyze:
-    needs: detect-changes
+    needs: [detect-changes, flutter-lint]
     if: needs.detect-changes.outputs.flutter == 'true'
     uses: ./.github/workflows/flutter-analyze.yaml
 
@@ -53,6 +53,6 @@ jobs:
     uses: ./.github/workflows/go-lint.yaml
 
   go-test:
-    needs: detect-changes
+    needs: needs: [detect-changes, go-lint]
     if: needs.detect-changes.outputs.go == 'true'
     uses: ./.github/workflows/go-test.yaml
