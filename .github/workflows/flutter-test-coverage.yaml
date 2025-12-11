@@ -19,37 +19,54 @@ jobs:
       - name: Run tests with coverage
         run: melos exec -c 10 -- "flutter test --coverage"
 
-      - name: Merge all lcov.info files
+      - name: Merge and clean coverage
         run: |
-          find . -type f -name "lcov.info" -path "*/coverage/*" > lcov_files.txt || true
+          find . -type f -name "lcov.info" -path "*/coverage/*" > lcov_files.txt || echo "No coverage files"
 
           if [ ! -s lcov_files.txt ]; then
-            echo "No coverage files found"
+            echo "No coverage files found – skipping report generation"
             exit 0
           fi
 
-          lcov $(cat lcov_files.txt | sed 's/^/-a /') -o coverage/lcov.info
+          lcov $(cat lcov_files.txt | sed 's/^/-a /' | tr '\n' ' ') -o coverage/lcov.raw.info
 
-          lcov --remove coverage/lcov.info \
-            '*/lib/*.g.dart' \
-            '*/lib/*.freezed.dart' \
-            '*/lib/*.gr.dart' \
-            '*/test/**' \
-            '*/generated/**' \
-            '*/.dart_tool/**' \
-            '*/packages/flutter/**' \
-            -o coverage/lcov.cleaned.info
+          lcov --remove coverage/lcov.raw.info \
+            "*/test/*" \
+            "*/generated/*" \
+            "*/lib/*.g.dart" \
+            "*/lib/*.freezed.dart" \
+            "*/lib/*.gr.dart" \
+            "*/.dart_tool/*" \
+            "*/packages/flutter/*" \
+            "*/bin/*" \
+            -o coverage/lcov.info
 
-          mv coverage/lcov.cleaned.info coverage/lcov.info
+          if [ ! -s coverage/lcov.info ] || ! grep -q "LF:" coverage/lcov.info; then
+            echo "Coverage file is empty after filtering – skipping HTML report"
+            exit 0
+          fi
+
+          echo "Final coverage file size:"
+          wc -l coverage/lcov.info
 
       - name: Generate HTML report
         run: |
-          genhtml coverage/lcov.info -o coverage/html --ignore-errors source
-          echo "Coverage report generated at coverage/html/index.html"
+          genhtml coverage/lcov.info -o coverage/html \
+            --ignore-errors source,uncovered \
+            --title "Flutter Coverage Report" \
+            --legend
+          echo "Coverage report → coverage/html/index.html"
 
-      - name: Upload coverage report as artifact
+      - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: flutter-coverage-html
           path: coverage/html
-          retention-days: 7
+          retention-days: 14
+
+      - name: Upload to Codecov
+        if: success()
+        uses: codecov/codecov-action@v5.5.2
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
