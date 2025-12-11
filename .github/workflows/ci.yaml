@@ -53,6 +53,6 @@ jobs:
     uses: ./.github/workflows/go-lint.yaml
 
   go-test:
-    needs: needs: [detect-changes, go-lint]
+    needs: [detect-changes, go-lint]
     if: needs.detect-changes.outputs.go == 'true'
     uses: ./.github/workflows/go-test.yaml
