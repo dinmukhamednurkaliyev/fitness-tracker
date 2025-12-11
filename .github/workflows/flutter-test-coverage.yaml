@@ -11,20 +11,25 @@ jobs:
       - uses: ./.github/actions/setup-flutter/
 
       - name: Install lcov (for merging & HTML report)
+
         run: sudo apt-get update -q && sudo apt-get install -y lcov
 
       - name: Melos bootstrap
         run: melos bootstrap
 
       - name: Run tests with coverage
+
         run: melos exec -c 10 -- "flutter test --coverage"
 
       - name: Merge and clean coverage
+        id: merge_coverage
         run: |
+
           find . -type f -name "lcov.info" -path "*/coverage/*" > lcov_files.txt || echo "No coverage files"
 
           if [ ! -s lcov_files.txt ]; then
             echo "No coverage files found – skipping report generation"
+
             exit 0
           fi
 
@@ -43,6 +48,7 @@ jobs:
 
           if [ ! -s coverage/lcov.info ] || ! grep -q "LF:" coverage/lcov.info; then
             echo "Coverage file is empty after filtering – skipping HTML report"
+            rm -f coverage/lcov.info
             exit 0
           fi
 
@@ -50,19 +56,28 @@ jobs:
           wc -l coverage/lcov.info
 
       - name: Generate HTML report
+
         run: |
+          if [ ! -f coverage/lcov.info ]; then
+            echo "No lcov.info found (probably skipped in previous step). Skipping HTML generation."
+            exit 0
+          fi
+
           genhtml coverage/lcov.info -o coverage/html \
-            --ignore-errors source,uncovered \
+            --ignore-errors source \
             --title "Flutter Coverage Report" \
             --legend
+
           echo "Coverage report → coverage/html/index.html"
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
+        if: always()
         with:
           name: flutter-coverage-html
           path: coverage/html
           retention-days: 14
+          if-no-files-found: ignore
 
       - name: Upload to Codecov
         if: success()
