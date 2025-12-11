@@ -1,9 +1,15 @@
 name: Go Lint
+
 on:
   workflow_call:
+
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6.0.1
       - uses: ./.github/actions/setup-go/
@@ -11,4 +17,4 @@ jobs:
         with:
           version: v2.7.0
           working-directory: services/api
-          args: --timeout=10m
+          args: --timeout=10m --out-format=colored-line-number

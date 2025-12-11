@@ -1,11 +1,37 @@
 name: Setup Flutter + Melos
+description: "Sets up Flutter environment and installs Melos with caching"
+
+inputs:
+  flutter-version:
+    description: "Version of Flutter to use"
+    required: false
+    default: "3.38.4"
+  melos-version:
+    description: "Version of Melos to install"
+    required: false
+    default: "7.3.0"
+
 runs:
   using: composite
   steps:
-    - uses: subosito/flutter-action@v2.21.0
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2.21.0
       with:
         channel: stable
-        version: "3.38.4"
+        flutter-version: ${{ inputs.flutter-version }}
         cache: true
-    - run: flutter pub global activate melos
+        cache-key: flutter-${{ runner.os }}-${{ inputs.flutter-version }}
+
+    - name: Install Melos
       shell: bash
+      run: |
+        if ! command -v melos &> /dev/null; then
+          echo "Melos not found, installing version ${{ inputs.melos-version }}..."
+          flutter pub global activate melos ${{ inputs.melos-version }}
+        else
+          echo "Melos already installed."
+        fi
+
+    - name: Add Pub Cache to Path
+      shell: bash
+      run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
