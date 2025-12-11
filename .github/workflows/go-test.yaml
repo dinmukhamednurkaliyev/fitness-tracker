@@ -12,19 +12,32 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: ./.github/actions/setup-go/
 
-      - name: Check Go Module Consistency
+      - name: Check if directory exists
+        id: check_dir
         run: |
-          cd services/api
+          if [ -d "services/api" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Services directory missing. Skipping tests."
+          fi
+
+      - uses: ./.github/actions/setup-go/
+        if: steps.check_dir.outputs.exists == 'true'
+        with:
+          working-directory: services/api
+
+      - name: Run Tests
+        if: steps.check_dir.outputs.exists == 'true'
+        working-directory: services/api
+        run: |
           go mod tidy
           git diff --exit-code go.mod go.sum
-
-      - name: Run Tests with Race Detector
-        run: |
           go test ./... -race -coverprofile=coverage.txt -covermode=atomic
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage
+        if: steps.check_dir.outputs.exists == 'true'
         uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

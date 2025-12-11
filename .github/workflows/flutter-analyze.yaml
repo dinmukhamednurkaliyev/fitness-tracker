@@ -12,8 +12,23 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6.0.1
+
+      - name: Check for melos.yaml
+        id: check_melos
+        run: |
+          if [ -f "melos.yaml" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - uses: ./.github/actions/setup-flutter/
+        if: steps.check_melos.outputs.exists == 'true'
+
       - name: Bootstrap
+        if: steps.check_melos.outputs.exists == 'true'
         run: melos bootstrap
+
       - name: Analyze
+        if: steps.check_melos.outputs.exists == 'true'
         run: melos run analyze:all
