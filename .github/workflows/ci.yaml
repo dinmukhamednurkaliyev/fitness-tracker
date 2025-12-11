@@ -57,10 +57,11 @@ jobs:
     if: needs.detect-changes.outputs.go == 'true'
     uses: ./.github/workflows/go-test.yaml
 
-  ci-success:
+  ci-pass:
     runs-on: ubuntu-latest
     if: always()
     needs:
+      - detect-changes
       - flutter-lint
       - flutter-analyze
       - flutter-test-coverage
@@ -70,7 +71,6 @@ jobs:
       - name: Check workflow status
         run: |
           RESULTS='${{ toJSON(needs.*.result) }}'
-
           echo "Job results: $RESULTS"
 
           if echo "$RESULTS" | grep -qE 'failure|cancelled'; then
