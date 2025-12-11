@@ -28,8 +28,18 @@ melos:
     test:coverage:
       run: |
         melos exec -c 10 -- "flutter test --coverage"
-        dart pub global run coverage:collect --in=**/lcov.info --out=coverage/lcov.info
-        dart pub global run coverage:format --html --in=coverage/lcov.info --out=coverage/html
+        find . -name "lcov.info" -path "*/coverage/*" | xargs -I {} echo "Merging {}"
+        find . -name "lcov.info" -path "*/coverage/*" | xargs lcov -a {} -o coverage/lcov.info || true
+        lcov --remove coverage/lcov.info \
+        'lib/*/*.g.dart' \
+        'lib/*/*.freezed.dart' \
+        'lib/**/*.g.dart' \
+        'lib/**/*.freezed.dart' \
+        '/test/**' \
+        '*/generated/*' \
+        -o coverage/lcov.info
+        genhtml coverage/lcov.info -o coverage/html
+        echo "Coverage report: coverage/html/index.html"
       description: Run unit tests in packages that have a 'test' directory.
     gen:build_runner:
       run: melos exec -c 8 --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
