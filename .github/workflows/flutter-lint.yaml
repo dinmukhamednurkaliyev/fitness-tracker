@@ -1,11 +1,19 @@
 name: Flutter Lint
+
 on:
   workflow_call:
+
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6.0.1
       - uses: ./.github/actions/setup-flutter/
-      - run: melos bootstrap
-      - run: melos run format:check
+      - name: Bootstrap
+        run: melos bootstrap
+      - name: Check Formatting
+        run: melos run format:check

@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, release/**]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -13,6 +16,7 @@ concurrency:
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       flutter: ${{ steps.filter.outputs.flutter }}
       go: ${{ steps.filter.outputs.go }}
@@ -27,39 +31,47 @@ jobs:
               - 'packages/**'
               - 'melos.yaml'
               - '**/*.dart'
+              - '.github/workflows/flutter-*.yaml'
             go:
               - 'services/**'
               - 'go.*'
               - '**/*.go'
+              - '.github/workflows/go-*.yaml'
 
   flutter-lint:
     needs: detect-changes
     if: needs.detect-changes.outputs.flutter == 'true'
     uses: ./.github/workflows/flutter-lint.yaml
+    secrets: inherit
 
   flutter-analyze:
     needs: [detect-changes, flutter-lint]
     if: needs.detect-changes.outputs.flutter == 'true'
     uses: ./.github/workflows/flutter-analyze.yaml
+    secrets: inherit
 
   flutter-test-coverage:
     needs: [detect-changes, flutter-analyze]
     if: needs.detect-changes.outputs.flutter == 'true'
     uses: ./.github/workflows/flutter-test-coverage.yaml
+    secrets: inherit
 
   go-lint:
     needs: detect-changes
     if: needs.detect-changes.outputs.go == 'true'
     uses: ./.github/workflows/go-lint.yaml
+    secrets: inherit
 
   go-test:
     needs: [detect-changes, go-lint]
     if: needs.detect-changes.outputs.go == 'true'
     uses: ./.github/workflows/go-test.yaml
+    secrets: inherit
 
   ci-pass:
     runs-on: ubuntu-latest
     if: always()
+    timeout-minutes: 5
     needs:
       - detect-changes
       - flutter-lint
@@ -73,10 +85,15 @@ jobs:
           RESULTS='${{ toJSON(needs.*.result) }}'
           echo "Job results: $RESULTS"
 
-          if echo "$RESULTS" | grep -qE 'failure|cancelled'; then
-            echo "❌ Critical failure detected in workflow."
+          if [[ "${{ needs.detect-changes.result }}" == "failure" ]]; then
+            echo "❌ Critical: Change detection failed."
             exit 1
           fi
 
-          echo "✅ All checks passed or were safely skipped."
+          if echo "$RESULTS" | grep -qE 'failure|cancelled'; then
+            echo "❌ Error: One or more required jobs failed."
+            exit 1
+          fi
+
+          echo "✅ CI Green: All checks passed or were safely skipped."
           exit 0
