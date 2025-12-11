@@ -1,22 +1,55 @@
 name: Flutter Test & Coverage
 on:
   workflow_call:
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
+
       - uses: ./.github/actions/setup-flutter/
-      - run: dart pub global activate coverage
-      - run: melos bootstrap
-      - run: melos run test:coverage
 
-      - name: Collect coverage
+      - name: Install lcov (for merging & HTML report)
+        run: sudo apt-get update -q && sudo apt-get install -y lcov
+
+      - name: Melos bootstrap
+        run: melos bootstrap
+
+      - name: Run tests with coverage
+        run: melos exec -c 10 -- "flutter test --coverage"
+
+      - name: Merge all lcov.info files
         run: |
-          dart pub global run coverage:collect --in=**/coverage/lcov.info --out=coverage/lcov.info --wait-paused || true
-          dart pub global run coverage:format --html --in=coverage/lcov.info --out=coverage/html --report-on=lib || echo "No coverage"
+          find . -type f -name "lcov.info" -path "*/coverage/*" > lcov_files.txt || true
 
-      - uses: actions/upload-artifact@v4
+          if [ ! -s lcov_files.txt ]; then
+            echo "No coverage files found"
+            exit 0
+          fi
+
+          lcov $(cat lcov_files.txt | sed 's/^/-a /') -o coverage/lcov.info
+
+          lcov --remove coverage/lcov.info \
+            '*/lib/*.g.dart' \
+            '*/lib/*.freezed.dart' \
+            '*/lib/*.gr.dart' \
+            '*/test/**' \
+            '*/generated/**' \
+            '*/.dart_tool/**' \
+            '*/packages/flutter/**' \
+            -o coverage/lcov.cleaned.info
+
+          mv coverage/lcov.cleaned.info coverage/lcov.info
+
+      - name: Generate HTML report
+        run: |
+          genhtml coverage/lcov.info -o coverage/html --ignore-errors source
+          echo "Coverage report generated at coverage/html/index.html"
+
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v4
         with:
           name: flutter-coverage-html
           path: coverage/html
+          retention-days: 7
