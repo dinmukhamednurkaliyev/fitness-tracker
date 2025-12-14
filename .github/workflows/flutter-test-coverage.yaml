@@ -74,7 +74,7 @@ jobs:
           retention-days: 7
 
       - name: Upload to Codecov
-         if: steps.setup.outputs.installed == 'true' && steps.merge_coverage.outputs.skipped != 'true'
+        if: steps.setup.outputs.installed == 'true' && steps.merge_coverage.outputs.skipped != 'true'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/lcov.info
