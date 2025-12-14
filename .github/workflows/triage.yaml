@@ -11,8 +11,12 @@ permissions:
 jobs:
   label:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
+      - uses: actions/checkout@v6.0.01
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          sparse-checkout: .github/labeler.yml
+
       - uses: actions/labeler@v6.0.1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
