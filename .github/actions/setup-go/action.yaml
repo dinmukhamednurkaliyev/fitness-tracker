@@ -1,5 +1,5 @@
-name: Setup Go
-description: "Sets up Go environment with caching and optional private repo access"
+name: Setup Go Environment
+description: "Smart setup: Checks for go.mod, installs Go, handles auth"
 
 inputs:
   go-version:
@@ -7,26 +7,45 @@ inputs:
     required: false
     default: "1.25.5"
   working-directory:
-    description: "Path to the directory containing go.sum for caching hash"
+    description: "Path to the directory (service root)"
     required: false
     default: "."
   token:
     description: "GITHUB_TOKEN for private modules access"
     required: false
 
+outputs:
+  installed:
+    description: "Returns 'true' if Go environment was set up, 'false' if skipped"
+    value: ${{ steps.check.outputs.exists }}
+
 runs:
   using: composite
   steps:
+    - name: Check for go.mod
+      id: check
+      shell: bash
+      run: |
+        TARGET="${{ inputs.working-directory }}/go.mod"
+        if [ -f "$TARGET" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "✅ Found go.mod in ${{ inputs.working-directory }}"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ go.mod not found in ${{ inputs.working-directory }}. Skipping Go setup."
+        fi
+
     - name: Setup Go
-      uses: actions/setup-go@v6.1.0
+      if: steps.check.outputs.exists == 'true'
+      uses: actions/setup-go@v6.10
       with:
         go-version: ${{ inputs.go-version }}
         cache: true
         cache-dependency-path: ${{ inputs.working-directory }}/go.sum
 
-    # - name: Configure Private Modules Access
-    #   if: inputs.token != ''
-    #   shell: bash
-    #   run: |
-    #     git config --global url."https://${{ inputs.token }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
-    #     echo "GOPRIVATE=github.com/my-company/*" >> $GITHUB_ENV
+    - name: Configure Private Modules Access
+      if: steps.check.outputs.exists == 'true' && inputs.token != ''
+      shell: bash
+      run: |
+        git config --global url."https://${{ inputs.token }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+        echo "GOPRIVATE=github.com/my-company/*" >> $GITHUB_ENV

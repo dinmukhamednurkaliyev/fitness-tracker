@@ -13,24 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.1
 
-      - name: Check for melos.yaml
-        id: check_melos
-        run: |
-          if [ -f "melos.yaml" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "✅ Melos configuration found."
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ melos.yaml not found. Skipping Flutter steps."
-          fi
-
       - uses: ./.github/actions/setup-flutter/
-        if: steps.check_melos.outputs.exists == 'true'
-
-      - name: Bootstrap
-        if: steps.check_melos.outputs.exists == 'true'
-        run: melos bootstrap
+        id: setup
 
       - name: Check Formatting
-        if: steps.check_melos.outputs.exists == 'true'
+        if: steps.setup.outputs.installed == 'true'
         run: melos run format:check

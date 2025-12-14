@@ -45,13 +45,13 @@ jobs:
     secrets: inherit
 
   flutter-analyze:
-    needs: [detect-changes, flutter-lint]
+    needs: detect-changes
     if: needs.detect-changes.outputs.flutter == 'true'
     uses: ./.github/workflows/flutter-analyze.yaml
     secrets: inherit
 
   flutter-test-coverage:
-    needs: [detect-changes, flutter-analyze]
+    needs: detect-changes
     if: needs.detect-changes.outputs.flutter == 'true'
     uses: ./.github/workflows/flutter-test-coverage.yaml
     secrets: inherit
@@ -63,7 +63,7 @@ jobs:
     secrets: inherit
 
   go-test:
-    needs: [detect-changes, go-lint]
+    needs: detect-changes
     if: needs.detect-changes.outputs.go == 'true'
     uses: ./.github/workflows/go-test.yaml
     secrets: inherit

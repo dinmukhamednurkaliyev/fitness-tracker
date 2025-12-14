@@ -1,20 +1,47 @@
-name: Setup Flutter + Melos
-description: "Sets up Flutter environment and installs Melos with caching"
+name: Setup Flutter Environment
+description: "Smart setup: Checks for Melos, installs Flutter/Melos, and Bootstraps"
 
 inputs:
   flutter-version:
-    description: "Version of Flutter to use"
+    description: "Version of Flutter"
     required: false
     default: "3.38.4"
   melos-version:
-    description: "Version of Melos to install"
+    description: "Version of Melos"
     required: false
     default: "7.3.0"
+  run-bootstrap:
+    description: "Run 'melos bootstrap' automatically?"
+    required: false
+    default: "true"
+  working-directory:
+    description: "Root directory of the app"
+    required: false
+    default: "."
+
+outputs:
+  installed:
+    description: "Returns 'true' if environment was set up, 'false' if skipped (no melos.yaml)"
+    value: ${{ steps.check.outputs.exists }}
 
 runs:
   using: composite
   steps:
+    - name: Check for melos.yaml
+      id: check
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -f "melos.yaml" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "✅ Melos project found."
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ melos.yaml not found. Skipping setup."
+        fi
+
     - name: Setup Flutter
+      if: steps.check.outputs.exists == 'true'
       uses: subosito/flutter-action@v2.21.0
       with:
         channel: stable
@@ -23,15 +50,21 @@ runs:
         cache-key: flutter-${{ runner.os }}-${{ inputs.flutter-version }}
 
     - name: Install Melos
+      if: steps.check.outputs.exists == 'true'
       shell: bash
       run: |
+
+        echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
         if ! command -v melos &> /dev/null; then
-          echo "Melos not found, installing version ${{ inputs.melos-version }}..."
+          echo "Installing Melos ${{ inputs.melos-version }}..."
           flutter pub global activate melos ${{ inputs.melos-version }}
         else
           echo "Melos already installed."
         fi
 
-    - name: Add Pub Cache to Path
+    - name: Melos Bootstrap
+      if: steps.check.outputs.exists == 'true' && inputs.run-bootstrap == 'true'
       shell: bash
-      run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+      working-directory: ${{ inputs.working-directory }}
+      run: melos bootstrap
