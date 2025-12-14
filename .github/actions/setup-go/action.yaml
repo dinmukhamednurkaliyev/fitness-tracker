@@ -37,7 +37,7 @@ runs:
 
     - name: Setup Go
       if: steps.check.outputs.exists == 'true'
-      uses: actions/setup-go@v6.10
+      uses: actions/setup-go@v6.1.0
       with:
         go-version: ${{ inputs.go-version }}
         cache: true
