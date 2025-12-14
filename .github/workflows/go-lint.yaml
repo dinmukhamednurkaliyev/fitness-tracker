@@ -2,6 +2,9 @@ name: Go Lint
 
 on:
   workflow_call:
+    secrets:
+      PAT:
+        required: false
 
 permissions:
   contents: read
@@ -11,25 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check if directory exists
-        id: check_dir
-        run: |
-          TARGET_DIR="services/api"
-          if [ -d "$TARGET_DIR" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "✅ Directory $TARGET_DIR found."
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Directory $TARGET_DIR not found. Skipping linting."
-          fi
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/setup-go/
-        if: steps.check_dir.outputs.exists == 'true'
+        id: setup
+        with:
+          working-directory: services/api
+          token: ${{ secrets.PAT }}
 
       - name: Run GolangCI-Lint
-        if: steps.check_dir.outputs.exists == 'true'
-        uses: golangci/golangci-lint-action@v9.2.0
+        if: steps.setup.outputs.installed == 'true'
+        uses: golangci/golangci-lint-action@v9.20
         with:
-          version: v2.7.0
+          version: 2.7.0
           working-directory: services/api
-          args: --timeout=10m --out-format=colored-line-number
+          args: --timeout=5m --out-format=colored-line-number

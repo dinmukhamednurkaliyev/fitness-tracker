@@ -14,62 +14,42 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6.0.1
-
-      - name: Check for melos.yaml
-        id: check_melos
-        run: |
-          if [ -f "melos.yaml" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ melos.yaml not found. Skipping tests."
-          fi
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/setup-flutter/
-        if: steps.check_melos.outputs.exists == 'true'
+        id: setup
 
       - name: Install lcov
-        if: steps.check_melos.outputs.exists == 'true'
+        if: steps.setup.outputs.installed == 'true'
         run: |
           if ! command -v lcov &> /dev/null; then
-            sudo apt-get update -q
-            sudo apt-get install -y lcov
+            sudo apt-get update -q && sudo apt-get install -y lcov
           fi
 
-      - name: Melos bootstrap
-        if: steps.check_melos.outputs.exists == 'true'
-        run: melos bootstrap
-
       - name: Run tests with coverage
-        if: steps.check_melos.outputs.exists == 'true'
-        run: melos exec -c 10 -- "flutter test --coverage"
+        if: steps.setup.outputs.installed == 'true'
+        run: melos exec -c 6 --fail-fast -- "flutter test --coverage"
 
       - name: Merge and clean coverage
-        if: steps.check_melos.outputs.exists == 'true'
+        if: steps.setup.outputs.installed == 'true'
         id: merge_coverage
         run: |
-
           mkdir -p coverage
 
           find . -type f -name "lcov.info" -not -path "./coverage/*" > lcov_files.txt
 
           if [ ! -s lcov_files.txt ]; then
-            echo "⚠️ No lcov.info files found. Maybe no tests were run?"
+            echo "⚠️ No lcov.info files found."
             echo "skipped=true" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          echo "Found $(wc -l < lcov_files.txt) coverage files. Merging..."
-
+          echo "Merging $(wc -l < lcov_files.txt) files..."
           cat lcov_files.txt | xargs lcov --add-file > coverage/lcov.raw.info
 
           lcov --remove coverage/lcov.raw.info \
-            "*/test/*" \
-            "*/generated/*" \
-            "*/lib/*.g.dart" \
-            "*/lib/*.freezed.dart" \
-            "*/lib/*.gr.dart" \
+            "*/test/*" "*/generated/*" "*/lib/*.g.dart" \
+            "*/lib/*.freezed.dart" "*/lib/*.gr.dart" \
             "*/.dart_tool/*" \
             -o coverage/lcov.info --ignore-errors unused
 
@@ -86,19 +66,17 @@ jobs:
             --title "Flutter Coverage Report"
 
       - name: Upload coverage artifact
-        if: steps.merge_coverage.outputs.skipped != 'true' && steps.check_melos.outputs.exists == 'true'
         uses: actions/upload-artifact@v5
+        if: steps.setup.outputs.installed == 'true' && steps.merge_coverage.outputs.skipped != 'true'
         with:
           name: flutter-coverage-html
           path: coverage/html
           retention-days: 7
-          if-no-files-found: ignore
 
       - name: Upload to Codecov
-        if: steps.merge_coverage.outputs.skipped != 'true' && steps.check_melos.outputs.exists == 'true'
-        uses: codecov/codecov-action@v5.5.2
+         if: steps.setup.outputs.installed == 'true' && steps.merge_coverage.outputs.skipped != 'true'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/lcov.info
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           verbose: true
