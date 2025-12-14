@@ -34,7 +34,7 @@ jobs:
 
       - name: Upload coverage
         if: steps.setup.outputs.installed == 'true'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./services/api/coverage.txt

@@ -66,14 +66,15 @@ jobs:
             --title "Flutter Coverage Report"
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v5
         if: steps.setup.outputs.installed == 'true' && steps.merge_coverage.outputs.skipped != 'true'
+        uses: actions/upload-artifact@v6
         with:
           name: flutter-coverage-html
           path: coverage/html
           retention-days: 7
 
       - name: Upload to Codecov
+        uses: codecov/codecov-action@v5.5.2
         if: steps.setup.outputs.installed == 'true' && steps.merge_coverage.outputs.skipped != 'true'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
