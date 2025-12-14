@@ -1,0 +1,23 @@
+flutter:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "applications/**"
+          - "packages/**"
+          - "melos.yaml"
+          - "**/*.dart"
+          - ".github/workflows/flutter-*.yaml"
+
+go:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "services/**"
+          - "go.*"
+          - "**/*.go"
+          - ".github/workflows/go-*.yaml"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/actions/**"
+          - ".github/labeler.yml"
