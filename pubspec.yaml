@@ -2,7 +2,7 @@ name: fitness_tracker
 publish_to: "none"
 repository: https://github.com/dinmukhamednurkaliyev/fitness-tracker
 environment:
-  sdk: ^3.10.1
+  sdk: ^3.10.0
 
 dev_dependencies:
   melos: ^7.3.0

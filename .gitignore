@@ -1,8 +1,7 @@
-# GITIGNORE
-# Excludes build artifacts, dependencies, secrets, and system files from version control.
 
+# =========================================================
 # DART & FLUTTER
-# Dependencies and build outputs managed by Pub.
+# =========================================================
 **/.dart_tool/
 **/.pub/
 **/.pub-cache/
@@ -12,9 +11,9 @@
 **/build/
 **/pubspec.lock
 
+# =========================================================
 # GENERATED CODE
-# Files automatically created by build_runner (JSON serialization, freezing, routing).
-# These should be regenerated locally rather than committed.
+# =========================================================
 **/*.g.dart
 **/*.gr.dart
 **/*.freezed.dart
@@ -27,15 +26,17 @@
 **/*.graphql.dart
 **/*.reflectable.dart
 
-# GO (BACKEND)
-# Compiled binaries, vendor dependencies, and test artifacts.
+# =========================================================
+# GO
+# =========================================================
 **/backend/bin
 **/backend/vendor
 *.test
 *.out
 
-# IDE SETTINGS
-# User-specific workspace configurations (IntelliJ, VS Code, Eclipse).
+# =========================================================
+# IDE
+# =========================================================
 **/.idea/
 **/.vscode/
 **/*.iml
@@ -43,30 +44,34 @@
 **/.classpath
 **/.settings/
 
-# OS FILES
-# Metadata files created by the operating system.
+# =========================================================
+# OS
+# =========================================================
 **/.DS_Store
 **/*.swp
 **/*~
 
-# SECRETS & LOCAL CONFIG
-# SENSITIVE DATA. Never commit environment variables or keys.
+# =========================================================
+# SECRETS
+# =========================================================
 **/local.properties
 **/*.local.dart
 **/*.secret.dart
 **/.env
 **/.env.*
 
-# GOOGLE SERVICES
-# Project-specific configuration files for Firebase/GCP.
+# =========================================================
+# GOOGLE
+# =========================================================
 **/google-services.json
 **/GoogleService-Info.plist
 **/.firebase/
 **/firebase.json
 **/.firebaserc
 
+# =========================================================
 # TEMPORARY FILES
-# Logs, crash reports, and coverage data.
+# =========================================================
 **/*.log
 **/*.tmp
 **/temp/
@@ -74,8 +79,9 @@
 **/coverage/
 **/*.lcov
 
+# =========================================================
 # IOS
-# CocoaPods dependencies and Xcode build artifacts.
+# =========================================================
 **/ios/Pods/
 **/ios/.symlinks/
 **/ios/Flutter/Flutter.framework
@@ -87,8 +93,9 @@
 **/ios/*.pbxuser
 **/ios/*.perspectivev3
 
+# =========================================================
 # ANDROID
-# Gradle build cache and local configuration.
+# =========================================================
 **/android/.gradle
 **/android/local.properties
 **/android/app/build
@@ -97,8 +104,9 @@
 **/android/gradlew
 **/android/gradlew.bat
 
+# =========================================================
 # BINARIES
-# General compiled executables and libraries.
+# =========================================================
 *.exe
 *.exe~
 *.dll
