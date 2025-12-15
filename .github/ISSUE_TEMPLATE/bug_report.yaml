@@ -1,0 +1,58 @@
+name: 🐛 Bug Report
+description: Report a bug so we can fix it
+title: "[Bug]: "
+labels: ["type/bug", "status/wip"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out the report! Please describe the issue as detailed as possible.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: area
+      description: In which part of the project did the error occur?
+      options:
+        - "Flutter: Client App (Mobile)"
+        - "Flutter: Core UI Package"
+        - "Go: API Service"
+        - "CI/CD & DevOps"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the problem
+      description: What happened?
+      placeholder: A short and clear description of the error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we see this error?
+      placeholder: |
+        1. Open screen '...'
+        2. Click on button '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version of the app / Commit Hash
+      placeholder: v1.0.2 or sha123456
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Screenshots
+      description: Insert logs here or attach files
+      render: shell
