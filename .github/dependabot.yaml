@@ -1,10 +1,18 @@
 version: 2
 updates:
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+
+    assignees:
+      - "dinmukhamednurkaliyev"
+
+    reviewers:
+      - "dinmukhamednurkaliyev"
+
     labels:
       - "type/chore"
       - "area/ci"
@@ -13,14 +21,35 @@ updates:
     directory: "/applications/client_app"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
+
+    assignees:
+      - "dinmukhamednurkaliyev"
+    reviewers:
+      - "dinmukhamednurkaliyev"
+
     labels:
       - "type/chore"
       - "area/flutter"
 
-  - package-ecosystem: "gomod"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
     directory: "/services/api"
     schedule:
       interval: "weekly"
+
+    assignees:
+      - "dinmukhamednurkaliyev"
+    reviewers:
+      - "dinmukhamednurkaliyev"
+
     labels:
       - "type/chore"
       - "area/go"
+
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
