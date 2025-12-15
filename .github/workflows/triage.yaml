@@ -15,10 +15,10 @@ jobs:
       - uses: actions/checkout@v6.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          sparse-checkout: .github/labeler.yml
+          sparse-checkout: .github/labeler.yaml
 
       - uses: actions/labeler@v6.0.1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           sync-labels: true
-          configuration-path: .github/labeler.yml
+          configuration-path: .github/labeler.yaml
