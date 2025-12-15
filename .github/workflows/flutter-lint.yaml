@@ -1,4 +1,4 @@
-name: Flutter Lint
+name: "Check: Flutter Lint"
 
 on:
   workflow_call:

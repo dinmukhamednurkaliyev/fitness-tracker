@@ -1,4 +1,4 @@
-name: Flutter Analyze
+name: "Check: Flutter Analyze"
 
 on:
   workflow_call:

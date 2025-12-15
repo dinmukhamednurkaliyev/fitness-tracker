@@ -1,4 +1,4 @@
-name: Release Drafter
+name: "Bot: Release Drafter"
 
 on:
   push:

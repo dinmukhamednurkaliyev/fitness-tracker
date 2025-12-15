@@ -1,4 +1,4 @@
-name: Flutter Test & Coverage
+name: "Check: Flutter Test"
 
 on:
   workflow_call:
