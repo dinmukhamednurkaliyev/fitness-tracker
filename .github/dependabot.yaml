@@ -4,24 +4,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-
     open-pull-requests-limit: 10
-
-    reviewers:
-      - "Dinmukhamed Nurkaliyev"
+    labels:
+      - "type/chore"
+      - "area/ci"
 
   - package-ecosystem: "pub"
     directory: "/applications/client_app"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: "pub"
-    directory: "/packages/core_ui"
-    schedule:
-      interval: "weekly"
+    labels:
+      - "type/chore"
+      - "area/flutter"
 
   - package-ecosystem: "gomod"
     directory: "/services/api"
     schedule:
       interval: "weekly"
+    labels:
+      - "type/chore"
+      - "area/go"
