@@ -1,0 +1,20 @@
+name: 🚀 Feature Request
+description: Suggest a new idea or improvement
+title: "[Feat]: "
+labels: ["type/feature", "status/wip"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the context. For example "I find it inconvenient to do X, because..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested solution
+      description: Describe how it should work.
+    validations:
+      required: true
