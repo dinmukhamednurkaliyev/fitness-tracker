@@ -1,4 +1,4 @@
-name: CI
+name: "CI: Main Pipeline"
 
 on:
   push:
@@ -50,10 +50,10 @@ jobs:
     uses: ./.github/workflows/flutter-analyze.yaml
     secrets: inherit
 
-  flutter-test-coverage:
+  flutter-test:
     needs: detect-changes
     if: needs.detect-changes.outputs.flutter == 'true'
-    uses: ./.github/workflows/flutter-test-coverage.yaml
+    uses: ./.github/workflows/flutter-test.yaml
     secrets: inherit
 
   go-lint:
@@ -76,7 +76,7 @@ jobs:
       - detect-changes
       - flutter-lint
       - flutter-analyze
-      - flutter-test-coverage
+      - flutter-test
       - go-lint
       - go-test
     steps:
