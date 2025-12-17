@@ -1,4 +1,3 @@
-
 # =========================================================
 # DART & FLUTTER
 # =========================================================
@@ -10,6 +9,15 @@
 **/.flutter-plugins-dependencies
 **/build/
 **/pubspec.lock
+**/.packages.generated
+**/doc/api/
+**/flutter_*.png
+**/linked_*.ds
+**/unlinked.ds
+**/unlinked_spec.ds
+**/.fvm/
+**/packages/**/pubspec.lock
+**/lib/generated_plugin_registrant.dart
 
 # =========================================================
 # GENERATED CODE
@@ -25,6 +33,7 @@
 **/*.chopper.dart
 **/*.graphql.dart
 **/*.reflectable.dart
+**/lib/l10n/gen/
 
 # =========================================================
 # GO
@@ -43,6 +52,10 @@
 **/.project
 **/.classpath
 **/.settings/
+.atom/
+*.ipr
+*.iws
+.vscode/*
 
 # =========================================================
 # OS
@@ -50,6 +63,8 @@
 **/.DS_Store
 **/*.swp
 **/*~
+*.pyc
+.svn/
 
 # =========================================================
 # SECRETS
@@ -59,6 +74,7 @@
 **/*.secret.dart
 **/.env
 **/.env.*
+*.jks
 
 # =========================================================
 # GOOGLE
@@ -78,20 +94,41 @@
 **/tmp/
 **/coverage/
 **/*.lcov
+**/.buildlog/
+**/.history
+**/migrate_working_dir/
+**/app.*.map.json
 
 # =========================================================
 # IOS
 # =========================================================
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
 **/ios/Pods/
 **/ios/.symlinks/
 **/ios/Flutter/Flutter.framework
 **/ios/Flutter/App.framework
 **/ios/Flutter/Flutter.podspec
-**/ios/*.mode1v3
-**/ios/*.mode2v3
-**/ios/*.moved-aside
-**/ios/*.pbxuser
-**/ios/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
 
 # =========================================================
 # ANDROID
@@ -103,12 +140,35 @@
 **/android/captures
 **/android/gradlew
 **/android/gradlew.bat
+**/android/**/gradle-wrapper.jar
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
 
 # =========================================================
 # BINARIES
 # =========================================================
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+**/*.exe
+**/*.exe~
+**/*.dll
+**/*.so
+**/*.dylib
+**/*.class
+app.*.symbols
+
+# =========================================================
+# EXCEPTIONS
+# =========================================================
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!**/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!**/dev/ci/**/Gemfile.lock
+!**/.vscode/extensions.json
+!**/.vscode/launch.json
+!**/.idea/codeStyles/
+!**/.idea/dictionaries/
+!**/.idea/runConfigurations/
