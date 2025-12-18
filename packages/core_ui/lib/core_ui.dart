@@ -1,4 +1,5 @@
-/// A Very Good Project created by Very Good CLI.
+/// Core UI library
 library;
 
-export 'src/core_ui.dart';
+export 'src/brand_colors.dart';
+export 'src/brand_text_styles.dart';
