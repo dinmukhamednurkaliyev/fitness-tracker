@@ -28,6 +28,18 @@ class BrandColors extends ThemeExtension<BrandColors> {
     required this.background,
   });
 
+  /// Standard factory for the application.
+  factory BrandColors.standard() {
+    return const BrandColors(
+      primary: Colors.blue,
+      secondary: Colors.white,
+      success: Colors.green,
+      error: Colors.red,
+      warning: Colors.yellow,
+      background: Colors.white,
+    );
+  }
+
   /// The core accent color of the brand, used for primary actions and
   /// key branding.
   final Color primary;

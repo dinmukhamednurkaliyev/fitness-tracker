@@ -31,6 +31,40 @@ class BrandTextStyles extends ThemeExtension<BrandTextStyles> {
     required this.caption,
   });
 
+  /// Standard factory for the application.
+  factory BrandTextStyles.standard() {
+    return const BrandTextStyles(
+      h1: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+      h2: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      h3: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      bodyPrimary: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+      ),
+      bodySecondary: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+      ),
+      button: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      caption: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.normal,
+      ),
+    );
+  }
+
   /// Hero title style. Used for major screen headings and high-impact text.
   final TextStyle h1;
 

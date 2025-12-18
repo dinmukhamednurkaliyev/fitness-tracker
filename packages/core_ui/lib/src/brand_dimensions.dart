@@ -29,21 +29,25 @@ class BrandDimensions extends ThemeExtension<BrandDimensions> {
     required this.spaceS,
     required this.spaceM,
     required this.spaceL,
+    required this.spaceXL,
     required this.radiusS,
     required this.radiusM,
     required this.radiusL,
   });
 
   /// Standard 8px-grid based factory for the application.
-  factory BrandDimensions.standard() => const BrandDimensions(
-    spaceXS: 4,
-    spaceS: 8,
-    spaceM: 16,
-    spaceL: 24,
-    radiusS: 4,
-    radiusM: 12,
-    radiusL: 24,
-  );
+  factory BrandDimensions.standard() {
+    return const BrandDimensions(
+      spaceXS: 4,
+      spaceS: 8,
+      spaceM: 16,
+      spaceL: 24,
+      spaceXL: 32,
+      radiusS: 4,
+      radiusM: 12,
+      radiusL: 24,
+    );
+  }
 
   /// Extra small spacing. Use for tight element grouping.
   final double spaceXS;
@@ -56,6 +60,9 @@ class BrandDimensions extends ThemeExtension<BrandDimensions> {
 
   /// Large spacing. Use for separating major layout sections.
   final double spaceL;
+
+  /// Extra large spacing. Use for separating major layout sections.
+  final double spaceXL;
 
   /// Small corner radius. Use for small elements like tags or checkboxes.
   final double radiusS;
@@ -87,6 +94,7 @@ class BrandDimensions extends ThemeExtension<BrandDimensions> {
     double? spaceS,
     double? spaceM,
     double? spaceL,
+    double? spaceXL,
     double? radiusS,
     double? radiusM,
     double? radiusL,
@@ -96,6 +104,7 @@ class BrandDimensions extends ThemeExtension<BrandDimensions> {
       spaceS: spaceS ?? this.spaceS,
       spaceM: spaceM ?? this.spaceM,
       spaceL: spaceL ?? this.spaceL,
+      spaceXL: spaceXL ?? this.spaceXL,
       radiusS: radiusS ?? this.radiusS,
       radiusM: radiusM ?? this.radiusM,
       radiusL: radiusL ?? this.radiusL,
@@ -117,6 +126,7 @@ class BrandDimensions extends ThemeExtension<BrandDimensions> {
       spaceS: lerpDouble(spaceS, other.spaceS, t) ?? spaceS,
       spaceM: lerpDouble(spaceM, other.spaceM, t) ?? spaceM,
       spaceL: lerpDouble(spaceL, other.spaceL, t) ?? spaceL,
+      spaceXL: lerpDouble(spaceXL, other.spaceXL, t) ?? spaceXL,
       radiusS: lerpDouble(radiusS, other.radiusS, t) ?? radiusS,
       radiusM: lerpDouble(radiusM, other.radiusM, t) ?? radiusM,
       radiusL: lerpDouble(radiusL, other.radiusL, t) ?? radiusL,
