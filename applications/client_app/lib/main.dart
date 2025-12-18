@@ -1,6 +1,8 @@
-import 'package:client_app/app.dart';
+import 'package:client_app/application.dart';
 import 'package:client_app/bootstrap.dart';
+import 'package:flutter/material.dart';
 
 Future<void> main() async {
-  await bootstrap(() => const App());
+  WidgetsFlutterBinding.ensureInitialized();
+  await bootstrap(() => const Application());
 }
